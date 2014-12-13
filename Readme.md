@@ -10,9 +10,10 @@ gem install rubinjam
 Usage
 =====
 
-```Ruby
-CODE EXAMPLE
+```Bash
+rubinjam # convert current directory into a binary
 ```
+
 
 Author
 ======

@@ -8,4 +8,5 @@ Gem::Specification.new name, Rubinjam::VERSION do |s|
   s.homepage = "https://github.com/grosser/#{name}"
   s.files = `git ls-files lib/ bin/ MIT-LICENSE`.split("\n")
   s.license = "MIT"
+  s.executables = ["rubinjam"]
 end

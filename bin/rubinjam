@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+require 'optparse'
+
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+require 'rubinjam'
+
+usage = nil
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = <<BANNER
+Rubinjam
+
+Jam a gem into a universal binary that only needs some ruby installed
+
+Usage:
+    rubinjam # convert current directory into a binary
+
+Options:
+BANNER
+  opts.on("-h", "--help","Show this.") { puts opts; exit }
+  opts.on('-v', '--version','Show Version'){ require 'rubinjam/version'; puts Rubinjam::VERSION; exit}
+end.parse!
+
+File.write(*Rubinjam.pack(Dir.pwd))
