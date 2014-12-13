@@ -1,0 +1,2 @@
+module Rubinjam
+end
