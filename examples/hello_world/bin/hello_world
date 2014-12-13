@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'hello/world'
+puts Hello::WORLD
