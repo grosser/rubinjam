@@ -4,7 +4,7 @@ gemspec
 gem "bump"
 gem "rake"
 gem "rspec"
-gem "byebug"
+gem "byebug", :platform => [:ruby_20, :ruby_21]
 
 # server
 gem "sinatra"

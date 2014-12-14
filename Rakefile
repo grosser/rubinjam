@@ -20,7 +20,7 @@ end
 
 task :generate do
   run "./bin/rubinjam && mv rubinjam examples/dogfood"
-  run "cd examples/hello_world && ../dogfood/rubinjam" # using it's own compiled version to compile :D
+  Bundler.with_clean_env { run "cd examples/hello_world && ../dogfood/rubinjam" } # using it's own compiled version to compile :D
   raise "compile error" unless run("./examples/hello_world/hello_world") == "hello world\n"
 end
 

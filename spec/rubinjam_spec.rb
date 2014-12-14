@@ -87,7 +87,7 @@ describe Rubinjam do
     end
 
     it "fails without binary" do
-      rubinjam("", fail: true).should include "Can only pack exactly 1 binary"
+      rubinjam("", fail: true).should include "No binary found in ./bin"
     end
   end
 
