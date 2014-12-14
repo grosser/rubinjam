@@ -18,3 +18,7 @@ task :generate do
   run "cd examples/hello_world && ../dogfood/rubinjam" # using it's own compiled version to compile :D
   raise "compile error" unless run("./examples/hello_world/hello_world") == "hello world\n"
 end
+
+task :server do
+  sh "bundle exec rackup server/config.ru"
+end

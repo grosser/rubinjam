@@ -17,20 +17,28 @@ gem install rubinjam
 Standalone binary:
 
 ```Bash
-curl http://tinyurl.com/rubinjam > rubinjam && chmod +x rubinjam
+curl https://rubinjam.herokuapp.com/pack/rubinjam > rubinjam && chmod +x rubinjam
 ```
 
 Usage
 =====
 
+### CLI
+
 ```Bash
 rubinjam # convert current directory into a binary
+```
+
+### Web
+
+```Bash
+curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
 ```
 
 TODO
 ====
  - ruby version requirements
- - gem dependencies
+ - non utf-8 encoding support
  - native extensions
 
 Author
