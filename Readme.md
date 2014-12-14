@@ -18,6 +18,7 @@ Standalone binary:
 
 ```Bash
 curl https://rubinjam.herokuapp.com/pack/rubinjam > rubinjam && chmod +x rubinjam
+./rubinjam -v
 ```
 
 Usage
@@ -33,6 +34,7 @@ rubinjam # convert current directory into a binary
 
 ```Bash
 curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
+./pru -v
 ```
 
 TODO
