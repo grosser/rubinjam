@@ -56,7 +56,7 @@ module Rubinjam
     end
 
     def libs_from_paths(paths)
-      paths.select { |p| Dir.exist?(p) }.inject({}) do |all, path|
+      paths.select { |p| File.directory?(p) }.inject({}) do |all, path|
         Dir.chdir path do
           all.merge!(Hash[Dir["**/*.rb"].map { |f| [f.sub(/\.rb$/, ""), File.read(f)] }])
         end

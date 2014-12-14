@@ -83,11 +83,11 @@ describe Rubinjam do
     it "fails with multiple binaries" do
       write "bin/foo", "puts 111"
       write "bin/bar", "puts 111"
-      rubinjam("", fail: true).should include "Can only pack exactly 1 binary"
+      rubinjam("", :fail => true).should include "Can only pack exactly 1 binary"
     end
 
     it "fails without binary" do
-      rubinjam("", fail: true).should include "No binary found in ./bin"
+      rubinjam("", :fail => true).should include "No binary found in ./bin"
     end
   end
 

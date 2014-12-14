@@ -20,6 +20,6 @@ BANNER
 end.parse!
 
 name, content = Rubinjam.pack(Dir.pwd)
-File.write(name, content)
+File.open(name, 'w') { |f| f.write content }
 `chmod +x #{name}`
 raise "Unable to add execution bit" unless $?.success?

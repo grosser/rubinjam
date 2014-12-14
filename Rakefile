@@ -15,7 +15,7 @@ end
 task :default do
   sh "rspec spec/"
   Rake::Task[:generate].invoke
-  Rake::Task[:test_server].invoke
+  Rake::Task[:test_server].invoke unless ENV["TRAVIS"] && RUBY_VERSION < "1.9"
 end
 
 task :generate do
