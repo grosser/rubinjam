@@ -2,6 +2,10 @@ require "bundler/setup"
 require "bundler/gem_tasks"
 require "bump/tasks"
 
+def server(extra=nil)
+  exec "rackup server/config.ru #{extra}"
+end
+
 def run(cmd)
   result = `#{cmd}`
   raise "Failed #{result}" unless $?.success?
@@ -11,6 +15,7 @@ end
 task :default do
   sh "rspec spec/"
   Rake::Task[:generate].invoke
+  Rake::Task[:test_server].invoke
 end
 
 task :generate do
@@ -20,5 +25,17 @@ task :generate do
 end
 
 task :server do
-  sh "bundle exec rackup server/config.ru"
+  server
+end
+
+task :test_server do
+  pid = fork { server ">/dev/null 2>&1" }
+  begin
+    sleep 5
+    result = `curl --silent localhost:9292/pack/pru > pru && chmod +x pru && ./pru -h`
+    raise "Server failed: #{result}" unless result.include?("Pipeable Ruby")
+    `rm -f pru`
+  ensure
+    Process.kill(:KILL, pid)
+  end
 end
