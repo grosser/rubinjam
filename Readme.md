@@ -1,40 +1,21 @@
-Jam a gem into a universal binary that works with any ruby.
+Jam entire gem into a binary that works with any ruby.
 
- - Everything in 1 tiny binary
- - No gem installation
- - No version management
- - Readable/Editable binary to add debugging output when needed
+ - All dependencies included
+ - Still readable, can add debugging
+ - use when you cannot install gems or don't want to install a gems multiple times
 
-Install
-=======
+```Bash
+# https://rubinjam.herokuapp.com/pack/GEM/VERSION
+curl https://rubinjam.herokuapp.com/pack/rake > rake && chmod +x rake
+./rake --version
+```
 
-As gem:
+Pack local/non-gem
+============
 
 ```Bash
 gem install rubinjam
-```
-
-Standalone binary:
-
-```Bash
-curl https://rubinjam.herokuapp.com/pack/rubinjam > rubinjam && chmod +x rubinjam
-./rubinjam -v
-```
-
-Usage
-=====
-
-### CLI
-
-```Bash
 rubinjam # convert current directory into a binary
-```
-
-### Web
-
-```Bash
-curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
-./pru -v
 ```
 
 TODO
