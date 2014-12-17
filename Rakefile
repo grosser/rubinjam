@@ -12,6 +12,15 @@ def run(cmd)
   result
 end
 
+def child_pids(pid)
+  pipe = IO.popen("ps -ef | grep #{pid}")
+
+  pipe.readlines.map do |line|
+    parts = line.split(/\s+/)
+    parts[2].to_i if parts[3] == pid.to_s and parts[2] != pipe.pid.to_s
+  end.compact
+end
+
 task :default do
   sh "rspec spec/"
   Rake::Task[:generate].invoke
@@ -32,10 +41,10 @@ task :test_server do
   pid = fork { server ">/dev/null 2>&1" }
   begin
     sleep 5
-    result = `curl --silent localhost:9292/pack/pru > pru && chmod +x pru && ./pru -h`
+    result = `curl --silent 127.0.0.1:9292/pack/pru > pru && chmod +x pru && ./pru -h`
     raise "Server failed: #{result}" unless result.include?("Pipeable Ruby")
-    `rm -f pru`
   ensure
-    Process.kill(:KILL, pid)
+    `rm -f pru`
+    (child_pids(pid) + [pid]).each { |pid| Process.kill(:TERM, pid) }
   end
 end
