@@ -87,7 +87,7 @@ module Rubinjam
         def require(file)
           if code = Rubinjam::LIBRARIES[file]
             return if code == :loaded
-            eval(code, TOPLEVEL_BINDING, "rubinjam/\#{file}")
+            eval(code, TOPLEVEL_BINDING, "rubinjam/\#{file}.rb")
             Rubinjam::LIBRARIES[file] = :loaded
           else
             super
