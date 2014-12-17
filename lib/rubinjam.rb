@@ -1,6 +1,7 @@
 require "tmpdir"
 require "bundler"
 require "rubinjam/version"
+require "shellwords"
 
 module Rubinjam
   class << self
@@ -18,8 +19,8 @@ module Rubinjam
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
           # unpack
-          command = ["gem", "unpack", gem]
-          command << "-v" << version if version
+          command = "gem unpack #{Shellwords.escape(gem)}"
+          command << " -v" << version if version
           IO.popen(command).read
 
           # bundle
