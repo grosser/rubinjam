@@ -40,6 +40,29 @@ describe Rubinjam do
       sh("./foo").should == "111\n"
     end
 
+    it "requires absolute files" do
+      write "lib/bar.rb", "puts 111"
+      write "bin/foo", "require File.expand_path('../lib/bar', __FILE__)"
+      rubinjam
+      write "lib/bar.rb", "puts 222"
+      sh("./foo").should == "111\n"
+    end
+
+    it "can autoload normal files" do
+      write "lib/bar.rb", "module Bar; BAZ=111;end"
+      write "bin/foo", "autoload :Bar, 'bar';puts Bar::BAZ"
+      rubinjam
+      sh("./foo").should == "111\n"
+    end
+
+    it "can autoload inside modules" do
+      write "lib/bar/baz.rb", "module Bar; module Baz; FOO=111;end;end"
+      write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end"
+      write "bin/foo", "require 'bar';puts Bar::Baz::FOO"
+      rubinjam
+      sh("./foo").should == "111\n"
+    end
+
     it "does not use binding from inside require method" do
       write "lib/bar.rb", "puts defined?(code).inspect"
       write "bin/foo", "require 'bar'"

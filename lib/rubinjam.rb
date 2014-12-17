@@ -82,13 +82,36 @@ module Rubinjam
           LIBRARIES = {
             #{libraries.map { |name,content| "#{name.inspect} => #{content.inspect}" }.join(",\n    ")}
           }
+
+          ROOT = File.expand_path("../", __FILE__) << "/lib/"
+        end
+
+        Module.class_eval do
+          alias autoload_without_rubinjam autoload
+          def autoload(const, file)
+            if Rubinjam::LIBRARIES[file]
+              require file
+            else
+              autoload_without_rubinjam(const, file)
+            end
+          end
+        end
+
+        alias autoload_without_rubinjam autoload
+        def autoload(const, file)
+          if Rubinjam::LIBRARIES[file]
+            require file
+          else
+            autoload_without_rubinjam(const, file)
+          end
         end
 
         def require(file)
-          if code = Rubinjam::LIBRARIES[file]
+          normalized_file = file.sub(Rubinjam::ROOT, "")
+          if code = Rubinjam::LIBRARIES[normalized_file]
             return if code == :loaded
-            eval(code, TOPLEVEL_BINDING, "rubinjam/\#{file}.rb")
-            Rubinjam::LIBRARIES[file] = :loaded
+            eval(code, TOPLEVEL_BINDING, "rubinjam/\#{normalized_file}.rb")
+            Rubinjam::LIBRARIES[normalized_file] = :loaded
           else
             super
           end
