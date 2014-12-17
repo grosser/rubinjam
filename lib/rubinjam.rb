@@ -85,27 +85,25 @@ module Rubinjam
           }
 
           ROOT = File.expand_path("../", __FILE__) << "/lib/"
-        end
 
-        Module.class_eval do
-          alias autoload_without_rubinjam autoload
-          def autoload(const, file)
-            if Rubinjam::LIBRARIES[file]
-              require file
-            else
-              autoload_without_rubinjam(const, file)
+          module AutoloadFix
+            def self.included(base)
+              base.class_eval do
+                alias autoload_without_rubinjam autoload
+                def autoload(const, file)
+                  if Rubinjam::LIBRARIES[file]
+                    require file
+                  else
+                    autoload_without_rubinjam(const, file)
+                  end
+                end
+              end
             end
           end
         end
 
-        alias autoload_without_rubinjam autoload
-        def autoload(const, file)
-          if Rubinjam::LIBRARIES[file]
-            require file
-          else
-            autoload_without_rubinjam(const, file)
-          end
-        end
+        Module.send(:include, Rubinjam::AutoloadFix)
+        include Rubinjam::AutoloadFix
 
         def require(file)
           normalized_file = file.sub(Rubinjam::ROOT, "")
