@@ -70,6 +70,15 @@ describe Rubinjam do
         sh("./foo").should == "111\n"
       end
 
+      it "can autoload inherited" do
+        write "lib/bar/foo.rb", "module Bar; Foo = 111;end"
+        write "lib/bar/baz.rb", "module Bar; module Baz; FOO=Foo;end;end"
+        write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';autoload :Foo, 'bar/foo';end"
+        write "bin/foo", "require 'bar';puts Bar::Baz::FOO"
+        rubinjam
+        sh("./foo").should == "111\n"
+      end
+
       it "autoloads in correct order of usage" do
         write "lib/bar/baz.rb", "module Bar; module Baz; FOO=444;end;end;puts 333"
         write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end; puts 111"
