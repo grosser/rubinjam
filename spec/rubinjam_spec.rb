@@ -103,6 +103,14 @@ describe Rubinjam do
         rubinjam
         sh("./foo").should == "111\n"
       end
+
+      it "does not loop when autoloaded constant is not found via require" do
+        write "lib/bar/baz.rb", "module Bar; module Ooops; FOO=111;end;end"
+        write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end"
+        write "bin/foo", "require 'bar';puts Bar::Baz::FOO"
+        rubinjam
+        sh("./foo", fail: true).should include("uninitialized constant Bar::Baz (NameError)")
+      end
     end
 
     it "does not use binding from inside require method" do

@@ -140,6 +140,14 @@ module Rubinjam
 
                 alias const_missing_without_rubinjam const_missing
                 def const_missing(const)
+                  # do not load twice / go into infitire loops
+                  @rubinjam_tried_const_missing ||= {}
+                  if @rubinjam_tried_const_missing[const]
+                    return const_missing_without_rubinjam(const)
+                  end
+                  @rubinjam_tried_const_missing[const] = true
+
+                  # try to find autoload in current module or nesting
                   nesting, file = Rubinjam.file_from_nesting(self, const)
                   if file
                     require file
