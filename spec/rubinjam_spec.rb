@@ -48,19 +48,38 @@ describe Rubinjam do
       sh("./foo").should == "111\n"
     end
 
-    it "can autoload normal files" do
-      write "lib/bar.rb", "module Bar; BAZ=111;end"
-      write "bin/foo", "autoload :Bar, 'bar';puts Bar::BAZ"
-      rubinjam
-      sh("./foo").should == "111\n"
-    end
+    describe 'autoload' do
+      it "can autoload normal files" do
+        write "lib/bar.rb", "module Bar; BAZ=111;end"
+        write "bin/foo", "autoload :Bar, 'bar';puts Bar::BAZ"
+        rubinjam
+        sh("./foo").should == "111\n"
+      end
 
-    it "can autoload inside modules" do
-      write "lib/bar/baz.rb", "module Bar; module Baz; FOO=111;end;end"
-      write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end"
-      write "bin/foo", "require 'bar';puts Bar::Baz::FOO"
-      rubinjam
-      sh("./foo").should == "111\n"
+      it "can autoload inside modules" do
+        write "lib/bar/baz.rb", "module Bar; module Baz; FOO=111;end;end"
+        write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end"
+        write "bin/foo", "require 'bar';puts Bar::Baz::FOO"
+        rubinjam
+        sh("./foo").should == "111\n"
+      end
+
+      it "autoloads in correct order of usage" do
+        write "lib/bar/baz.rb", "module Bar; module Baz; FOO=444;end;end;puts 333"
+        write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end; puts 111"
+        write "bin/foo", "require 'bar';puts '222';puts Bar::Baz::FOO"
+        rubinjam
+        sh("./foo").should == "111\n222\n333\n444\n"
+      end
+
+      it "autoloads multiple modules in different namespaces" do
+        write "lib/bar/baz.rb", "module Bar; module Baz; FOO=111;end;end"
+        write "lib/baz/baz.rb", "module Baz; module Baz; FOO=222;end;end"
+        write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end;module Baz; autoload :Baz, 'baz/baz';end;"
+        write "bin/foo", "require 'bar';puts Bar::Baz::FOO;puts Baz::Baz::FOO"
+        rubinjam
+        sh("./foo").should == "111\n222\n"
+      end
     end
 
     it "does not use binding from inside require method" do
