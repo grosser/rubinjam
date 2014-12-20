@@ -52,7 +52,7 @@ describe Rubinjam do
       it "cannot load missing" do
         write "bin/foo", "puts Bar::BAZ"
         rubinjam
-        sh("./foo", fail: true).should include("uninitialized constant Bar (NameError)")
+        sh("./foo", :fail => true).should include("uninitialized constant Bar (NameError)")
       end
 
       it "can autoload normal files" do
@@ -109,7 +109,7 @@ describe Rubinjam do
         write "lib/bar.rb", "module Bar; autoload :Baz, 'bar/baz';end"
         write "bin/foo", "require 'bar';puts Bar::Baz::FOO"
         rubinjam
-        sh("./foo", fail: true).should include("uninitialized constant Bar::Baz (NameError)")
+        sh("./foo", :fail => true).should include("uninitialized constant Bar::Baz (NameError)")
       end
     end
 
