@@ -90,7 +90,6 @@ module Rubinjam
             def self.included(base)
               base.class_eval do
                 alias autoload_without_rubinjam autoload
-
                 def autoload(const, file)
                   if Rubinjam::LIBRARIES[file]
                     @rubinjam_autload ||= {}
@@ -100,12 +99,13 @@ module Rubinjam
                   end
                 end
 
+                alias const_missing_without_rubinjam const_missing
                 def const_missing(const)
                   if @rubinjam_autload && file = @rubinjam_autload[const]
                     require file
                     const_get(const)
                   else
-                    super
+                    const_missing_without_rubinjam(const)
                   end
                 end
               end
