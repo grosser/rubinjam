@@ -122,6 +122,7 @@ describe Rubinjam do
 
     context "with gem dependency" do
       let(:gemspec) { "foo.gemspec" }
+      let(:extra) { "" }
 
       before do
         write gemspec, <<-RUBY.gsub(/^          /, "")
@@ -129,6 +130,7 @@ describe Rubinjam do
             s.summary = "test"
             s.authors = ["Test"]
             s.email = "test@test.it"
+            #{extra}
             s.add_runtime_dependency "parallel", "1.3.3"
           end
         RUBY
@@ -151,6 +153,14 @@ describe Rubinjam do
         rubinjam # does not blow up
         sh("./foo").should == "1.3.3\n" # ... and still works
       end
+
+      describe "with development dependency" do
+        let(:extra) { "s.add_development_dependency 'pru'" }
+        it "does not include development dependencies" do
+          rubinjam
+          File.read("foo").should_not include "pru"
+        end
+      end
     end
 
     it "fails with multiple binaries" do
@@ -161,6 +171,21 @@ describe Rubinjam do
 
     it "fails without binary" do
       rubinjam("", :fail => true).should include "No binary found in ./bin"
+    end
+  end
+
+  describe ".pack_gem" do
+    it "packs a simple gem" do
+      name, content = Rubinjam.pack_gem("pru")
+      write(name, content)
+      sh("chmod +x pru && ./pru -v").should =~ /\A\d\.\d\.\d\n\z/
+    end
+
+    it "packs a gem with dependencies" do
+      name, content = Rubinjam.pack_gem("maxitest")
+      write(name, content)
+      sh("chmod +x mtest && ./mtest -h").should include("check syntax only")
+      File.read('mtest').should include "minitest/benchmark" # shipped with runtime dependency
     end
   end
 

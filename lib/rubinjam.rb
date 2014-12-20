@@ -1,7 +1,6 @@
 require "tmpdir"
 require "bundler"
 require "rubinjam/version"
-require "shellwords"
 
 module Rubinjam
   class << self
@@ -15,16 +14,27 @@ module Rubinjam
       end
     end
 
-    def pack_gem(gem, version)
+    def pack_gem(gem, version=nil)
+      require "shellwords"
+      require "rubygems/package"
+
       Dir.mktmpdir do |dir|
         Dir.chdir(dir) do
-          # unpack
-          command = "gem unpack #{Shellwords.escape(gem)}"
+          # fetch
+          command = "gem fetch #{Shellwords.escape(gem)}"
           command << " -v" << version if version
           IO.popen(command).read
 
+          # load spec
+          gem_ball = Dir["*.gem"].first
+          spec = Gem::Package.new(gem_ball).spec.to_ruby
+          IO.popen("gem unpack #{gem_ball}").read
+
           # bundle
-          Dir.chdir(Dir["*"].first) { Rubinjam.pack(Dir.pwd) }
+          Dir.chdir(gem_ball.sub(".gem", "")) do
+            File.open("#{gem}.gemspec", "w") { |f| f.write spec }
+            Rubinjam.pack(Dir.pwd)
+          end
         end
       end
     end
@@ -42,6 +52,7 @@ module Rubinjam
       Dir.mktmpdir do |dir|
         sh "cp -R . #{dir}/"
         Dir.chdir(dir) do
+          write gemspec, File.read(gemspec).gsub(/.*add_development_dependency.*/, "")
           write "Gemfile", <<-RUBY.gsub(/^            /, "")
             source "https://rubygems.org"
             gemspec
