@@ -23,12 +23,12 @@ module Rubinjam
           # fetch
           command = "gem fetch #{Shellwords.escape(gem)}"
           command << " -v" << version if version
-          IO.popen(command).read
+          sh(command)
 
           # load spec
           gem_ball = Dir["*.gem"].first
           spec = Gem::Package.new(gem_ball).spec.to_ruby
-          IO.popen("gem unpack #{gem_ball}").read
+          sh("gem unpack #{gem_ball}")
 
           # bundle
           Dir.chdir(gem_ball.sub(".gem", "")) do
@@ -57,9 +57,9 @@ module Rubinjam
             source "https://rubygems.org"
             gemspec
           RUBY
+
           sh("rm -f Gemfile.lock")
-          bundle = "bundle install --quiet --path bundle"
-          sh("#{bundle} --local || #{bundle}")
+          sh("BUNDLE_IGNORE_CONFIG=1 bundle install --quiet --path bundle") # heroku has a --deployment config -> ignore it
           paths = sh("bundle exec ruby -e 'puts $LOAD_PATH'").split("\n")
           paths = paths.grep(%r{/gems/}).reject { |r| r =~ %r{/gems/bundler-\d} }
           libs_from_paths(paths)
