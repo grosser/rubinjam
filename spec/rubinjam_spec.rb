@@ -86,6 +86,14 @@ describe Rubinjam do
         rubinjam
         sh("./foo").should == "111\n222\n"
       end
+
+      it "can autoload absolute paths" do
+        write "lib/bar/baz.rb", "module Bar; module Baz; FOO=111;end;end"
+        write "lib/bar.rb", "module Bar; autoload :Baz, File.expand_path('../bar/baz', __FILE__);end"
+        write "bin/foo", "require 'bar'; puts Bar::Baz::FOO"
+        rubinjam
+        sh("./foo").should == "111\n"
+      end
     end
 
     it "does not use binding from inside require method" do

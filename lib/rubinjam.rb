@@ -84,16 +84,26 @@ module Rubinjam
             #{libraries.map { |name,content| "#{name.inspect} => #{content.inspect}" }.join(",\n    ")}
           }
 
-          ROOT = File.expand_path("../", __FILE__) << "/lib/"
+          ROOT = File.expand_path("../", __FILE__) << "/rubinjam/"
+
+          def self.normalize_file(file)
+            return file unless file.start_with?("/")
+            if file.start_with?(ROOT)
+              file.sub(ROOT, "")
+            else
+              file.split('/lib/').last
+            end
+          end
 
           module ModuleAutoloadFix
             def self.included(base)
               base.class_eval do
                 alias autoload_without_rubinjam autoload
                 def autoload(const, file)
-                  if Rubinjam::LIBRARIES[file]
+                  normalized_file = Rubinjam.normalize_file(file)
+                  if Rubinjam::LIBRARIES[normalized_file]
                     @rubinjam_autload ||= {}
-                    @rubinjam_autload[const] = file
+                    @rubinjam_autload[const] = normalized_file
                   else
                     autoload_without_rubinjam(const, file)
                   end
@@ -118,8 +128,9 @@ module Rubinjam
                 alias autoload_without_rubinjam autoload
 
                 def autoload(const, file)
-                  if Rubinjam::LIBRARIES[file]
-                    require file
+                  normalized_file = Rubinjam.normalize_file(file)
+                  if Rubinjam::LIBRARIES[normalized_file]
+                    require normalized_file
                   else
                     autoload_without_rubinjam(const, file)
                   end
@@ -133,7 +144,7 @@ module Rubinjam
         include Rubinjam::BaseAutoloadFix
 
         def require(file)
-          normalized_file = file.sub(Rubinjam::ROOT, "")
+          normalized_file = Rubinjam.normalize_file(file)
           if code = Rubinjam::LIBRARIES[normalized_file]
             return if code == :loaded
             eval(code, TOPLEVEL_BINDING, "rubinjam/\#{normalized_file}.rb")
