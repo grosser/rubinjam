@@ -175,7 +175,7 @@ describe Rubinjam do
   end
 
   describe ".pack_gem" do
-    before { pending "only needed for server ..." if RUBY_VERSION < "2.0.0" }
+    before { skip "only needed for server ..." if RUBY_VERSION < "2.0.0" } # they somehow work on travis, but I don't care ...
 
     it "packs a simple gem" do
       name, content = Rubinjam.pack_gem("pru")
