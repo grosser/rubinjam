@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubinjam (0.5.0)
+    rubinjam (0.5.1)
       bundler
 
 GEM
