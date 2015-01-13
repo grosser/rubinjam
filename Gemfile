@@ -4,10 +4,12 @@ ruby File.read('.ruby-version').strip if ENV["RACK_ENV"] == "production" # stric
 
 gemspec
 
-gem "bump"
-gem "rake"
-gem "rspec"
-gem "byebug", :platform => [:ruby_20, :ruby_21]
+group :test do
+  gem "bump"
+  gem "rake"
+  gem "rspec"
+  gem "byebug", :platform => [:ruby_20, :ruby_21]
+end
 
 # server
 gem "sinatra"
