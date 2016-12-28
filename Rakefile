@@ -41,7 +41,7 @@ task :test_server do
   pid = fork { server ">/dev/null 2>&1" }
   begin
     sleep 5
-    result = `curl --silent 127.0.0.1:9292/pack/pru > pru && chmod +x pru && ./pru -h`
+    result = `curl --silent --max-time 5 localhost:9292/pack/pru > pru && chmod +x pru && ./pru -h`
     raise "Server failed: #{result}" unless result.include?("Pipeable Ruby")
   ensure
     `rm -f pru`

@@ -6,6 +6,7 @@ module Rubinjam
   HEADER = '#!/usr/bin/env ruby'.freeze
 
   class << self
+    # pack a directory
     def pack(dir)
       Dir.chdir(dir) do
         binaries = Dir["bin/*"]
@@ -16,6 +17,7 @@ module Rubinjam
       end
     end
 
+    # pack a gem
     def pack_gem(gem, version=nil)
       require "shellwords"
       require "rubygems/package"
@@ -24,13 +26,13 @@ module Rubinjam
         Dir.chdir(dir) do
           # fetch
           command = "gem fetch #{Shellwords.escape(gem)}"
-          command << " -v" << version if version
+          command << " -v" << Shellwords.escape(version) if version
           sh(command)
 
           # load spec
           gem_ball = Dir["*.gem"].first
           spec = Gem::Package.new(gem_ball).spec.to_ruby
-          sh("gem unpack #{gem_ball}")
+          sh("gem unpack #{Shellwords.escape(gem_ball)}")
 
           # bundle
           Dir.chdir(gem_ball.sub(".gem", "")) do
@@ -44,7 +46,9 @@ module Rubinjam
     private
 
     def libraries
-      libs_from_paths(["lib"]).merge!(gem_libraries).merge!("rubinjam/internal" => internal_code)
+      libs_from_paths(["lib"]).
+        merge!(gem_libraries).
+        merge!("rubinjam/internal" => internal_code)
     end
 
     def internal_code
@@ -55,6 +59,8 @@ module Rubinjam
       end
     end
 
+    # unpack dependent gems with bundler so we can pack them
+    # this takes a while so we try to avoid if possible
     def gem_libraries
       return {} unless gemspec = Dir["*.gemspec"].first
       return {} unless File.read(gemspec) =~ /add_(runtime_)?dependency/

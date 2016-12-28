@@ -20,6 +20,8 @@ rubinjam # convert current directory into a binary
 
 TODO
 ====
+ - change tests to only verify that creation works on 2.0+ and that execution works on ree/1.9.3/2+
+ - ignore json gem if it has no version requirement since 1.9+ includes json
  - ruby version requirements
  - non utf-8 encoding support
  - native extensions
