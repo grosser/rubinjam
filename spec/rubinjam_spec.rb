@@ -183,6 +183,12 @@ describe Rubinjam do
       sh("chmod +x pru && ./pru -v").should =~ /\A\d\.\d\.\d\n\z/
     end
 
+    it "packs a gem with json dependency without using bundler" do
+      name, content = Rubinjam.pack_gem("cmd2json")
+      write(name, content)
+      sh("chmod +x cmd2json && ./cmd2json -v").should =~ /\A\d\.\d\.\d\n\z/
+    end
+
     it "packs a gem with dependencies" do
       name, content = Rubinjam.pack_gem("maxitest")
       write(name, content)

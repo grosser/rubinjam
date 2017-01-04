@@ -63,12 +63,17 @@ module Rubinjam
     # this takes a while so we try to avoid if possible
     def gem_libraries
       return {} unless gemspec = Dir["*.gemspec"].first
-      return {} unless File.read(gemspec) =~ /add_(runtime_)?dependency/
+
+      dependency = "add_(runtime_)?dependency"
+      content = File.read(gemspec)
+      content.gsub!(/.*#{dependency}.*['"\{\<]json['">\}].*/, '')
+      content.gsub!(/.*add_development_dependency.*/, "")
+      return {} unless content =~ /#{dependency}/
 
       Dir.mktmpdir do |dir|
         sh "cp -R . #{dir}/"
         Dir.chdir(dir) do
-          write gemspec, File.read(gemspec).gsub(/.*add_development_dependency.*/, "")
+          write gemspec, content
           write "Gemfile", <<-RUBY.gsub(/^            /, "")
             source "https://rubygems.org"
             gemspec
