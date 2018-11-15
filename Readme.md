@@ -1,8 +1,9 @@
 Jam entire gem into a binary that works with any ruby.
 
- - All dependencies included
- - Still readable, can add debugging
- - use when you cannot install gems or don't want to install a gems multiple times
+ - 5KB for hello-world executables
+ - Release a ruby tool as standalone executable (great for [github releases](https://github.com/grosser/git-autobisect/commit/1850359b60f4119a2e2a27797fac4e7659ddcfdc))
+ - Still readable, users can add debugging
+ - Avoid installing a gem for each ruby version
 
 ```Bash
 # https://rubinjam.herokuapp.com/pack/GEM/VERSION
