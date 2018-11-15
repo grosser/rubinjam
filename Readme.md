@@ -6,8 +6,8 @@ Jam entire gem into a binary that works with any ruby.
 
 ```Bash
 # https://rubinjam.herokuapp.com/pack/GEM/VERSION
-curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
-./pru --version
+curl https://rubinjam.herokuapp.com/pack/rake > rake && chmod +x rake
+./rake --version
 ```
 
 Pack local/non-gem
