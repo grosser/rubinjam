@@ -14,7 +14,12 @@ module Rubinjam
           binaries = Dir["#{folder}/*"]
           next if binaries.size == 0
           if binaries.size != 1
-            raise "Can only pack exactly 1 binary, found #{binaries.join(",")} in #{folder}"
+            local = File.join(folder, File.basename(dir))
+            if binaries.include?(local)
+              binaries = [local]
+            else
+              raise "Can only pack exactly 1 binary, found #{binaries.join(", ")} in #{folder}"
+            end
           end
           content = environment + File.read(binaries.first)
           return [File.basename(binaries.first), content]

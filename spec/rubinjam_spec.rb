@@ -176,6 +176,14 @@ describe Rubinjam do
       File.exist?("bar").should == true
     end
 
+    it "picks matching name when a file is named like the folder" do
+      local = File.basename(Dir.pwd)
+      write "bin/#{local}", "puts 111"
+      write "bin/foo", "puts 111"
+      rubinjam("").should == ""
+      File.exist?(local).should == true
+    end
+
     it "fails without binary" do
       rubinjam("", :fail => true).should include "No binary found in ./exe or ./bin"
     end
