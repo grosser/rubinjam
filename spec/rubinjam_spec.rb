@@ -169,8 +169,15 @@ describe Rubinjam do
       rubinjam("", :fail => true).should include "Can only pack exactly 1 binary"
     end
 
+    it "prefers exe folder since bin is often used for local binaries" do
+      write "bin/foo", "puts 111"
+      write "exe/bar", "puts 111"
+      rubinjam("").should == ""
+      File.exist?("bar").should == true
+    end
+
     it "fails without binary" do
-      rubinjam("", :fail => true).should include "No binary found in ./bin"
+      rubinjam("", :fail => true).should include "No binary found in ./exe or ./bin"
     end
   end
 

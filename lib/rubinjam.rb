@@ -9,11 +9,17 @@ module Rubinjam
     # pack a directory
     def pack(dir)
       Dir.chdir(dir) do
-        binaries = Dir["bin/*"]
-        raise "No binary found in ./bin" if binaries.size == 0
-        raise "Can only pack exactly 1 binary, found #{binaries.join(",")} in ./bin" unless binaries.size == 1
-        content = environment + File.read(binaries.first)
-        [File.basename(binaries.first), content]
+        folders = ["./exe", "./bin"]
+        folders.each do |folder|
+          binaries = Dir["#{folder}/*"]
+          next if binaries.size == 0
+          if binaries.size != 1
+            raise "Can only pack exactly 1 binary, found #{binaries.join(",")} in #{folder}"
+          end
+          content = environment + File.read(binaries.first)
+          return [File.basename(binaries.first), content]
+        end
+        raise "No binary found in #{folders.join(" or ")}"
       end
     end
 
