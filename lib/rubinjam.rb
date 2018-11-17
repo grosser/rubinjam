@@ -6,25 +6,21 @@ module Rubinjam
   HEADER = '#!/usr/bin/env ruby'.freeze
 
   class << self
+    # pack and write a binary given a directory
+    def write(dir)
+      name, content = pack(Dir.pwd)
+      write_file name, content
+      `chmod +x #{name}`
+      raise "Unable to add execution bit" unless $?.success?
+      name
+    end
+
     # pack a directory
     def pack(dir)
       Dir.chdir(dir) do
-        folders = ["./exe", "./bin"]
-        folders.each do |folder|
-          binaries = Dir["#{folder}/*"]
-          next if binaries.size == 0
-          if binaries.size != 1
-            local = File.join(folder, File.basename(dir))
-            if binaries.include?(local)
-              binaries = [local]
-            else
-              raise "Can only pack exactly 1 binary, found #{binaries.join(", ")} in #{folder}"
-            end
-          end
-          content = environment + File.read(binaries.first)
-          return [File.basename(binaries.first), content]
-        end
-        raise "No binary found in #{folders.join(" or ")}"
+        binary = binary_path
+        content = environment + File.read(binary)
+        return [File.basename(binary), content]
       end
     end
 
@@ -47,7 +43,7 @@ module Rubinjam
 
           # bundle
           Dir.chdir(gem_ball.sub(".gem", "")) do
-            File.open("#{gem}.gemspec", "w") { |f| f.write spec }
+            write_file "#{gem}.gemspec", spec
             Rubinjam.pack(Dir.pwd)
           end
         end
@@ -55,6 +51,24 @@ module Rubinjam
     end
 
     private
+
+    def binary_path
+      folders = ["./exe", "./bin"]
+      folders.each do |folder|
+        binaries = Dir["#{folder}/*"]
+        next if binaries.size == 0
+        if binaries.size != 1
+          local = File.join(folder, File.basename(Dir.pwd))
+          if binaries.include?(local)
+            binaries = [local]
+          else
+            raise "Can only pack exactly 1 binary, found #{binaries.join(", ")} in #{folder}"
+          end
+        end
+        return binaries.first
+      end
+      raise "No binary found in #{folders.join(" or ")}"
+    end
 
     def libraries
       libs_from_paths(["lib"]).
@@ -84,8 +98,8 @@ module Rubinjam
       Dir.mktmpdir do |dir|
         sh "cp -R . #{dir}/"
         Dir.chdir(dir) do
-          write gemspec, content
-          write "Gemfile", <<-RUBY.gsub(/^            /, "")
+          write_file gemspec, content
+          write_file "Gemfile", <<-RUBY.gsub(/^            /, "")
             source "https://rubygems.org"
             gemspec
           RUBY
@@ -113,7 +127,7 @@ module Rubinjam
       result
     end
 
-    def write(file, content)
+    def write_file(file, content)
       FileUtils.mkdir_p(File.dirname(file))
       File.open(file, "w") { |f| f.write content }
     end

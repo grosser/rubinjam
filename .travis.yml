@@ -1,5 +1,7 @@
 language: ruby
 bundler_args: ""
+branches:
+  only: master
 rvm:
 #  - ree
 #  - 1.9.3

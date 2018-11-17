@@ -8,6 +8,7 @@ group :test do
   gem "bump"
   gem "rake"
   gem "rspec"
+  gem "single_cov"
   gem "byebug", :platform => [:ruby_20, :ruby_21]
 end
 
