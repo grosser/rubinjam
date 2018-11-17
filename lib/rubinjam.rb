@@ -58,7 +58,7 @@ module Rubinjam
         binaries = Dir["#{folder}/*"]
         next if binaries.size == 0
         if binaries.size != 1
-          local = File.join(folder, File.basename(dir))
+          local = File.join(folder, File.basename(Dir.pwd))
           if binaries.include?(local)
             binaries = [local]
           else

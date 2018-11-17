@@ -48,8 +48,11 @@ end
 namespace :rubinjam do
   task :upload_binary  do
     # find token for auth
-    github_token = Rubinjam::Tasks.sh("git", "config", "github.token").strip
-    abort "Set github.token with: git config --global github.token <GITHUB-TOKEN>"
+    github_token = begin
+      Rubinjam::Tasks.sh("git", "config", "github.token").strip
+    rescue
+      abort "Set github.token with: git config --global github.token <GITHUB-TOKEN>"
+    end
 
     # find current tag
     # TODO: allow users to set TAG= or do fuzzy match ?

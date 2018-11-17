@@ -2,7 +2,7 @@ require "spec_helper"
 require "rake"
 require "rubinjam/tasks"
 
-SingleCov.covered!
+SingleCov.covered! uncovered: 5
 
 describe Rubinjam::Tasks do
   describe ".upload_binary" do
