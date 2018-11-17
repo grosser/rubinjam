@@ -19,7 +19,4 @@ BANNER
   opts.on('-v', '--version','Show Version'){ require 'rubinjam/version'; puts Rubinjam::VERSION; exit}
 end.parse!
 
-name, content = Rubinjam.pack(Dir.pwd)
-File.open(name, 'w') { |f| f.write content }
-`chmod +x #{name}`
-raise "Unable to add execution bit" unless $?.success?
+Rubinjam.write(Dir.pwd)

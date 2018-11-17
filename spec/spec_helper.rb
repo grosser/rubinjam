@@ -1,6 +1,11 @@
 require "bundler/setup"
+
+require "single_cov"
+SingleCov.setup :rspec
+
 require "rubinjam/version"
 require "rubinjam"
+
 require "tmpdir"
 
 RSpec.configure do |config|

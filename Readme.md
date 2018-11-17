@@ -11,16 +11,27 @@ curl https://rubinjam.herokuapp.com/pack/rake > rake && chmod +x rake
 ./rake --version
 ```
 
-Pack local/non-gem
-============
+### Pack local/non-gem
 
 ```Bash
 gem install rubinjam
 rubinjam # convert current directory into a binary
 ```
 
-TODO
-====
+### Upload binary on gem release
+
+Generate a [github token](https://github.com/settings/tokens/new) and store it in your ~/.gitconfig with:
+`git config --global github.token <GITHUB-TOKEN>`
+
+```ruby
+# Rakefile
+require 'bundler/gem_tasks'
+require 'rubinjam/tasks'
+
+task release: 'rubinjam:upload_binary'
+```
+
+# TODO
  - change tests to only verify that creation works on 2.0+ and that execution works on ree/1.9.3/2+
  - ignore json gem if it has no version requirement since 1.9+ includes json
  - ruby version requirements
