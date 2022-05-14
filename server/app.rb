@@ -26,6 +26,10 @@ def stream_result(out, work)
   out.print "\nraise 'code generation took too long'"
 end
 
+get "/" do
+  "see https://github.com/grosser/rubinjam"
+end
+
 get "/pack/:gem/?:version?" do
   content_type 'text/plain'
   work = Thread.new { Rubinjam.pack_gem(params[:gem], params[:version]).last }
