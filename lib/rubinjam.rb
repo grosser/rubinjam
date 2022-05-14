@@ -122,7 +122,7 @@ module Rubinjam
     end
 
     def sh(command, options={})
-      result = Bundler.with_clean_env { `#{command} 2>/dev/null` }
+      result = Bundler.with_unbundled_env { `#{command} 2>/dev/null` }
       raise "#{options[:fail] ? "SUCCESS" : "FAIL"} #{command}\n#{result}" if $?.success? == !!options[:fail]
       result
     end

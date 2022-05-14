@@ -2,7 +2,7 @@ require "spec_helper"
 require "rake"
 require "rubinjam/tasks"
 
-SingleCov.covered! uncovered: 5
+SingleCov.covered! uncovered: 4
 
 describe Rubinjam::Tasks do
   def expect_sh(includes, result)

@@ -46,7 +46,7 @@ module Rubinjam
 
       def find_or_create_release(auth, repo, tag)
         reply = sh("curl", *auth, "--data", {tag_name: tag}.to_json, "https://api.github.com/repos/#{repo}/releases")
-        unless id = JSON.parse(reply)["id"]
+        unless (id = JSON.parse(reply)["id"])
           reply = sh("curl", *auth, "https://api.github.com/repos/#{repo}/releases/tags/#{tag}")
           id = JSON.parse(reply).fetch("id")
         end

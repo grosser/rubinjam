@@ -222,7 +222,7 @@ describe Rubinjam do
   end
 
   def sh(command, options={})
-    result = Bundler.with_clean_env { `#{command} #{"2>&1" unless options[:keep_output]}` }
+    result = Bundler.with_unbundled_env { `#{command} #{"2>&1" unless options[:keep_output]}` }
     raise "#{options[:fail] ? "SUCCESS" : "FAIL"} #{command}\n#{result}" if $?.success? == !!options[:fail]
     result
   end
