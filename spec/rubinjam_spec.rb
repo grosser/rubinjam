@@ -207,7 +207,7 @@ describe Rubinjam do
     it "packs a gem with dependencies" do
       name, content = Rubinjam.pack_gem("maxitest")
       write(name, content)
-      sh("chmod +x mtest && ./mtest -h").should include("check syntax only")
+      sh("chmod +x mtest && ./mtest -h").should include("Usage:")
       File.read('mtest').should include "minitest/benchmark" # shipped with runtime dependency
     end
   end
