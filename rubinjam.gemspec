@@ -10,5 +10,5 @@ Gem::Specification.new name, Rubinjam::VERSION do |s|
   s.license = "MIT"
   s.executables = ["rubinjam"]
   s.add_runtime_dependency "bundler"
-  s.required_ruby_version = '>= 2.5'
+  s.required_ruby_version = '>= 2.7'
 end

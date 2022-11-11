@@ -31,6 +31,10 @@ require 'rubinjam/tasks'
 task release: 'rubinjam:upload_binary'
 ```
 
+### Server
+
+The server runs via `cd server && bundle exec rackup`
+
 # TODO
  - ignore json gem if it has no version requirement since 1.9+ includes json
  - ruby version requirements
