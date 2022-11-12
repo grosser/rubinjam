@@ -7,7 +7,7 @@ Jam entire gem into a binary that works with any ruby.
 
 ```Bash
 # https://rubinjam.herokuapp.com/pack/GEM/VERSION
-curl https://rubinjam.herokuapp.com/pack/rake > rake && chmod +x rake
+curl -sSfL https://rubinjam.onrender.com/pack/rake > rake && chmod +x rake
 ./rake --version
 ```
 
